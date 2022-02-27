@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  become: yes
+  vars_prompt:
+    - name: username1
+      prompt: What is the username1?
+      private: no
+    - name: username2
+      prompt: What is the username2?
+      private: no
+    - name: username3
+      prompt: What is the username3?
+      private: no
+    - name: username4
+      prompt: What is the username4?
+      private: no
+    - name: groupname
+      prompt: What is the groupname?
+      private: no
+  tasks:
+    - name: create user conventional way
+      shell: sudo useradd {{ username1 }}; sudo useradd {{ username2 }}
+    - name: create user using for_loop
+      shell: for i in {{ username3 }} {{ username4 }}; do sudo useradd $i; done
+    - name: create a new group
+      shell: sudo groupadd {{ groupname }}
+    - name: add users to new group
+      shell: for j in {{ username1 }} {{ username2 }} {{ username3 }} {{ username4 }}; do sudo usermod -aG {{ groupname }} $j; done
+    - name: delete users
+      shell: for k in {{ username1 }} {{ username2 }} {{ username3 }} {{ username4 }}; do sudo userdel $k; done
+    - name: delete group
+      shell: sudo groupdel {{ groupname }}
